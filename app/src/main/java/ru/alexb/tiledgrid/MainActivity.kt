@@ -3,36 +3,36 @@ package ru.alexb.tiledgrid
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.flowOf
+import ru.alexb.tiledgrid.data.tilesSample
+import ru.alexb.tiledgrid.ui.grid.TiledGrid
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            TiledGridTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
-                }
-            }
-        }
+        setContent { MainScreen() }
     }
 }
 
 @Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
-
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
+fun MainScreen() {
     TiledGridTheme {
-        Greeting("Android")
+        Surface(color = MaterialTheme.colors.background) {
+            TiledGrid(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(5.dp),
+                horizontalSpans = 6,
+                tiles = flowOf(tilesSample)
+            )
+        }
     }
 }
