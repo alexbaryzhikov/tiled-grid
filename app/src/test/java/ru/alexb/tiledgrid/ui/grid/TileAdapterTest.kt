@@ -3,6 +3,9 @@ package ru.alexb.tiledgrid.ui.grid
 import com.google.common.truth.Truth.assertThat
 import org.junit.Before
 import org.junit.Test
+import ru.alexb.tiledgrid.data.TilePosition
+import ru.alexb.tiledgrid.data.TileAdapter
+import ru.alexb.tiledgrid.data.TileDto
 
 class TileAdapterTest {
     private lateinit var tileAdapter: TileAdapter
@@ -21,22 +24,22 @@ class TileAdapterTest {
     // 1
     @Test
     fun should_place_a_single_tile() {
-        val tiles = listOf(Tile("1", 1, 1))
+        val tiles = listOf(TileDto("1", 1, 1))
         val result = tileAdapter.getTilePositions(1, tiles)
-        assertThat(result).containsExactly(Position(0, 0))
+        assertThat(result).containsExactly(TilePosition(0, 0))
     }
 
     // 1 2
     @Test
     fun should_place_two_tiles_on_the_same_row() {
         val tiles = listOf(
-            Tile("1", 1, 1),
-            Tile("2", 1, 1)
+            TileDto("1", 1, 1),
+            TileDto("2", 1, 1)
         )
         val result = tileAdapter.getTilePositions(2, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(1, 0)
+            TilePosition(0, 0),
+            TilePosition(0, 1)
         )
     }
 
@@ -44,13 +47,13 @@ class TileAdapterTest {
     @Test
     fun should_place_two_tiles_on_the_same_row_2() {
         val tiles = listOf(
-            Tile("1", 2, 1),
-            Tile("2", 1, 1)
+            TileDto("1", 2, 1),
+            TileDto("2", 1, 1)
         )
         val result = tileAdapter.getTilePositions(3, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(2, 0)
+            TilePosition(0, 0),
+            TilePosition(0, 2)
         )
     }
 
@@ -59,13 +62,13 @@ class TileAdapterTest {
     @Test
     fun should_place_two_tiles_on_two_rows() {
         val tiles = listOf(
-            Tile("1", 1, 1),
-            Tile("2", 1, 1)
+            TileDto("1", 1, 1),
+            TileDto("2", 1, 1)
         )
         val result = tileAdapter.getTilePositions(1, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(0, 1)
+            TilePosition(0, 0),
+            TilePosition(1, 0)
         )
     }
 
@@ -75,13 +78,13 @@ class TileAdapterTest {
     @Test
     fun should_place_two_tiles_on_two_rows_2() {
         val tiles = listOf(
-            Tile("1", 1, 1),
-            Tile("2", 2, 1)
+            TileDto("1", 1, 1),
+            TileDto("2", 2, 1)
         )
         val result = tileAdapter.getTilePositions(2, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(0, 1)
+            TilePosition(0, 0),
+            TilePosition(1, 0)
         )
     }
 
@@ -90,15 +93,15 @@ class TileAdapterTest {
     @Test
     fun should_place_three_tiles() {
         val tiles = listOf(
-            Tile("1", 1, 2),
-            Tile("2", 1, 1),
-            Tile("3", 1, 1)
+            TileDto("1", 1, 2),
+            TileDto("2", 1, 1),
+            TileDto("3", 1, 1)
         )
         val result = tileAdapter.getTilePositions(2, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(1, 0),
-            Position(1, 1)
+            TilePosition(0, 0),
+            TilePosition(0, 1),
+            TilePosition(1, 1)
         )
     }
 
@@ -107,15 +110,15 @@ class TileAdapterTest {
     @Test
     fun should_place_three_tiles_2() {
         val tiles = listOf(
-            Tile("1", 1, 1),
-            Tile("2", 1, 2),
-            Tile("3", 1, 1)
+            TileDto("1", 1, 1),
+            TileDto("2", 1, 2),
+            TileDto("3", 1, 1)
         )
         val result = tileAdapter.getTilePositions(2, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(1, 0),
-            Position(1, 0)
+            TilePosition(0, 0),
+            TilePosition(0, 1),
+            TilePosition(0, 1)
         )
     }
 
@@ -123,19 +126,19 @@ class TileAdapterTest {
     @Test
     fun should_return_invalid_positions_for_tiles_with_zero_dimension() {
         val tiles = listOf(
-            Tile("1", 1, 1),
-            Tile("2", 0, 1),
-            Tile("3", 1, 0),
-            Tile("4", 0, 0),
-            Tile("5", 1, 1)
+            TileDto("1", 1, 1),
+            TileDto("2", 0, 1),
+            TileDto("3", 1, 0),
+            TileDto("4", 0, 0),
+            TileDto("5", 1, 1)
         )
         val result = tileAdapter.getTilePositions(2, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position.INVALID,
-            Position.INVALID,
-            Position.INVALID,
-            Position(1, 0)
+            TilePosition(0, 0),
+            TilePosition.INVALID,
+            TilePosition.INVALID,
+            TilePosition.INVALID,
+            TilePosition(0, 1)
         )
     }
 
@@ -143,15 +146,15 @@ class TileAdapterTest {
     @Test
     fun should_return_invalid_positions_for_too_wide_tiles() {
         val tiles = listOf(
-            Tile("1", 1, 1),
-            Tile("2", 3, 1),
-            Tile("3", 1, 1)
+            TileDto("1", 1, 1),
+            TileDto("2", 3, 1),
+            TileDto("3", 1, 1)
         )
         val result = tileAdapter.getTilePositions(2, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position.INVALID,
-            Position(1, 0)
+            TilePosition(0, 0),
+            TilePosition.INVALID,
+            TilePosition(0, 1)
         )
     }
 
@@ -161,21 +164,21 @@ class TileAdapterTest {
     @Test
     fun should_place_multiple_tiles() {
         val tiles = listOf(
-            Tile("1", 4, 1),
-            Tile("2", 2, 1),
-            Tile("3", 2, 1),
-            Tile("4", 4, 1),
-            Tile("5", 3, 1),
-            Tile("6", 3, 1),
+            TileDto("1", 4, 1),
+            TileDto("2", 2, 1),
+            TileDto("3", 2, 1),
+            TileDto("4", 4, 1),
+            TileDto("5", 3, 1),
+            TileDto("6", 3, 1),
         )
         val result = tileAdapter.getTilePositions(6, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(4, 0),
-            Position(0, 1),
-            Position(2, 1),
-            Position(0, 2),
-            Position(3, 2),
+            TilePosition(0, 0),
+            TilePosition(0, 4),
+            TilePosition(1, 0),
+            TilePosition(1, 2),
+            TilePosition(2, 0),
+            TilePosition(2, 3),
         )
     }
 
@@ -188,21 +191,21 @@ class TileAdapterTest {
     @Test
     fun should_place_multiple_tiles_2() {
         val tiles = listOf(
-            Tile("1", 1, 4),
-            Tile("2", 1, 2),
-            Tile("3", 1, 3),
-            Tile("4", 1, 4),
-            Tile("5", 1, 3),
-            Tile("6", 1, 2),
+            TileDto("1", 1, 4),
+            TileDto("2", 1, 2),
+            TileDto("3", 1, 3),
+            TileDto("4", 1, 4),
+            TileDto("5", 1, 3),
+            TileDto("6", 1, 2),
         )
         val result = tileAdapter.getTilePositions(3, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(1, 0),
-            Position(2, 0),
-            Position(1, 2),
-            Position(2, 3),
-            Position(0, 4),
+            TilePosition(0, 0),
+            TilePosition(0, 1),
+            TilePosition(0, 2),
+            TilePosition(2, 1),
+            TilePosition(3, 2),
+            TilePosition(4, 0),
         )
     }
 
@@ -215,19 +218,19 @@ class TileAdapterTest {
     @Test
     fun should_place_multiple_tiles_3() {
         val tiles = listOf(
-            Tile("1", 2, 3),
-            Tile("2", 2, 1),
-            Tile("3", 3, 3),
-            Tile("4", 3, 2),
-            Tile("5", 2, 2),
+            TileDto("1", 2, 3),
+            TileDto("2", 2, 1),
+            TileDto("3", 3, 3),
+            TileDto("4", 3, 2),
+            TileDto("5", 2, 2),
         )
         val result = tileAdapter.getTilePositions(5, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0),
-            Position(2, 0),
-            Position(2, 1),
-            Position(0, 4),
-            Position(3, 4),
+            TilePosition(0, 0),
+            TilePosition(0, 2),
+            TilePosition(1, 2),
+            TilePosition(4, 0),
+            TilePosition(4, 3),
         )
     }
 
@@ -240,39 +243,39 @@ class TileAdapterTest {
     @Test
     fun should_place_multiple_tiles_4() {
         val tiles = listOf(
-            Tile("1", 3, 1),
-            Tile("9", 1, 1),
-            Tile("7", 3, 2),
-            Tile("a", 1, 1),
-            Tile("2", 3, 1),
-            Tile("b", 2, 1),
-            Tile("3", 3, 1),
-            Tile("c", 2, 1),
-            Tile("8", 3, 3),
-            Tile("4", 3, 1),
-            Tile("d", 1, 1),
-            Tile("e", 1, 1),
-            Tile("5", 3, 1),
-            Tile("6", 3, 1),
-            Tile("f", 1, 1),
+            TileDto("1", 3, 1),
+            TileDto("9", 1, 1),
+            TileDto("7", 3, 2),
+            TileDto("a", 1, 1),
+            TileDto("2", 3, 1),
+            TileDto("b", 2, 1),
+            TileDto("3", 3, 1),
+            TileDto("c", 2, 1),
+            TileDto("8", 3, 3),
+            TileDto("4", 3, 1),
+            TileDto("d", 1, 1),
+            TileDto("e", 1, 1),
+            TileDto("5", 3, 1),
+            TileDto("6", 3, 1),
+            TileDto("f", 1, 1),
         )
         val result = tileAdapter.getTilePositions(7, tiles)
         assertThat(result).containsExactly(
-            Position(0, 0), // 1
-            Position(3, 0), // 9
-            Position(4, 0), // 7
-            Position(0, 1), // a
-            Position(1, 1), // 2
-            Position(0, 2), // b
-            Position(2, 2), // 3
-            Position(5, 2), // c
-            Position(0, 3), // 8
-            Position(3, 3), // 4
-            Position(6, 3), // d
-            Position(3, 4), // e
-            Position(4, 4), // 5
-            Position(3, 5), // 6
-            Position(6, 5), // f
+            TilePosition(0, 0), // 1
+            TilePosition(0, 3), // 9
+            TilePosition(0, 4), // 7
+            TilePosition(1, 0), // a
+            TilePosition(1, 1), // 2
+            TilePosition(2, 0), // b
+            TilePosition(2, 2), // 3
+            TilePosition(2, 5), // c
+            TilePosition(3, 0), // 8
+            TilePosition(3, 3), // 4
+            TilePosition(3, 6), // d
+            TilePosition(4, 3), // e
+            TilePosition(4, 4), // 5
+            TilePosition(5, 3), // 6
+            TilePosition(5, 6), // f
         )
     }
 }
