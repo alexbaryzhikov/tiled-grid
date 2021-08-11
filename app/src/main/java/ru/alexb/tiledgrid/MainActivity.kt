@@ -29,7 +29,7 @@ fun MainScreen() {
             TiledGrid(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(5.dp),
+                    .padding(8.dp),
                 horizontalSpans = 6,
                 tiles = flowOf(tilesSample)
             )

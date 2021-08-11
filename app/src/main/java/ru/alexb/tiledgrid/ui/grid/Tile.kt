@@ -5,10 +5,10 @@ import androidx.compose.ui.graphics.Color
 
 class Tile(
     val id: String,
-    val width: Int,
-    val height: Int,
     val row: Int,
     val column: Int,
+    val width: Int,
+    val height: Int,
     val bgColor: Color,
     val content: @Composable () -> Unit
 )
