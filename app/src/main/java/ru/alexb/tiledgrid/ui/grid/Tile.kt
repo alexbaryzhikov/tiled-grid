@@ -10,5 +10,5 @@ class Tile(
     val width: Int,
     val height: Int,
     val bgColor: Color,
-    val content: @Composable () -> Unit
+    val content: @Composable () -> Unit = {}
 )

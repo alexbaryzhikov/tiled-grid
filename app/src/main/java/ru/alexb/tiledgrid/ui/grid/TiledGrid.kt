@@ -1,14 +1,11 @@
 package ru.alexb.tiledgrid.ui.grid
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
@@ -24,25 +21,30 @@ import kotlin.math.max
 fun TiledGrid(
     tiles: List<Tile>,
     modifier: Modifier = Modifier,
-    horizontalSpans: Int = 6,
-    interval: Dp = 8.dp,
+    columns: Int = 6,
+    spanWidth: Dp = 0.dp,
+    spanHeight: Dp = 48.dp,
+    spanInterval: Dp = 8.dp,
 ) {
     Layout(
         content = { tiles.forEach { Tile(it) } },
         modifier = modifier
     ) { measurables, constraints ->
         val tilesMap = tiles.associateBy { it.id }
-        val dpu = (constraints.maxWidth.toDp() - interval * (horizontalSpans - 1)) / horizontalSpans
+        val resolvedSpanWidth = when (spanWidth) {
+            0.dp -> getSpanWidth(constraints.maxWidth.toDp(), spanInterval, columns)
+            else -> spanWidth
+        }
         var maxHeight = 0
         val positions = hashMapOf<String, Pair<Int, Int>>()
         val placeables = hashMapOf<String, Placeable>()
         measurables.forEach { measurable ->
             val id = measurable.layoutId as String
             val tile = tilesMap.getValue(id)
-            val x = getTilePosition(tile.column, dpu, interval).roundToPx()
-            val y = getTilePosition(tile.row, dpu, interval).roundToPx()
-            val width = getTileSize(tile.width, dpu, interval).roundToPx()
-            val height = getTileSize(tile.height, dpu, interval).roundToPx()
+            val x = getTilePosition(tile.column, resolvedSpanWidth, spanInterval).roundToPx()
+            val y = getTilePosition(tile.row, spanHeight, spanInterval).roundToPx()
+            val width = getTileSize(tile.width, resolvedSpanWidth, spanInterval).roundToPx()
+            val height = getTileSize(tile.height, spanHeight, spanInterval).roundToPx()
             maxHeight = max(maxHeight, y + height)
             positions[id] = Pair(x, y)
             placeables[id] = measurable.measure(
@@ -50,7 +52,7 @@ fun TiledGrid(
                     minWidth = width,
                     maxWidth = width,
                     minHeight = height,
-                    maxHeight = height
+                    maxHeight = height,
                 )
             )
         }
@@ -66,9 +68,14 @@ fun TiledGrid(
     }
 }
 
-private fun getTilePosition(spans: Int, dpu: Dp, interval: Dp): Dp = (dpu + interval) * spans
+private fun getSpanWidth(maxWidth: Dp, spanInterval: Dp, columns: Int): Dp =
+    (maxWidth - spanInterval * (columns - 1)) / columns
 
-private fun getTileSize(spans: Int, dpu: Dp, interval: Dp): Dp = dpu * spans + interval * (spans - 1)
+private fun getTilePosition(spans: Int, spanSize: Dp, spanInterval: Dp): Dp =
+    (spanSize + spanInterval) * spans
+
+private fun getTileSize(spans: Int, spanSize: Dp, interval: Dp): Dp =
+    spanSize * spans + interval * (spans - 1)
 
 @Composable
 private fun Tile(tile: Tile) {
@@ -78,11 +85,11 @@ private fun Tile(tile: Tile) {
             .clip(MaterialTheme.shapes.medium)
             .clickable {},
         color = tile.bgColor,
-        content = tile.content,
+        content = tile.content
     )
 }
 
-@Preview
+@Preview(widthDp = 100, heightDp = 100)
 @Composable
 fun TilePreview() {
     TiledGridTheme {
@@ -93,25 +100,18 @@ fun TilePreview() {
             width = 2,
             height = 2,
             bgColor = Indigo400
-        ) {
-            Surface(
-                modifier = Modifier.size(100.dp),
-                color = Color(0x00000000),
-                content = {}
-            )
-        })
+        ))
     }
 }
 
-@Preview
+@Preview(widthDp = 400)
 @Composable
 fun TiledGridPreview() {
     TiledGridTheme {
         Surface(color = MaterialTheme.colors.background) {
             TiledGrid(
                 tiles = tilesSample,
-                modifier = Modifier.width(300.dp),
-                horizontalSpans = 6
+                columns = 6
             )
         }
     }

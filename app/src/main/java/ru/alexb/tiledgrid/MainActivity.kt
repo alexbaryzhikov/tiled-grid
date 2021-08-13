@@ -30,7 +30,7 @@ fun MainScreen() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalSpans = 6
+                columns = 6
             )
         }
     }
