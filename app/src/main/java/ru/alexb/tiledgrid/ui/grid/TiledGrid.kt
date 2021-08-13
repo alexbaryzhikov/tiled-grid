@@ -1,19 +1,29 @@
 package ru.alexb.tiledgrid.ui.grid
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.alexb.tiledgrid.data.tilesSample
-import ru.alexb.tiledgrid.ui.theme.Indigo400
+import ru.alexb.tiledgrid.ui.theme.CinnabarToxic
+import ru.alexb.tiledgrid.ui.theme.Indigo100
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 import kotlin.math.max
 
@@ -25,10 +35,16 @@ fun TiledGrid(
     spanWidth: Dp = 0.dp,
     spanHeight: Dp = 48.dp,
     spanInterval: Dp = 8.dp,
+    badgeProtrusion: Dp = 4.dp,
 ) {
     Layout(
-        content = { tiles.forEach { Tile(it) } },
-        modifier = modifier
+        content = {
+            tiles.forEach {
+                Tile(it)
+                if (it.badge) Badge(it.id)
+            }
+        },
+        modifier = modifier.padding(badgeProtrusion)
     ) { measurables, constraints ->
         val tilesMap = tiles.associateBy { it.id }
         val resolvedSpanWidth = when (spanWidth) {
@@ -36,32 +52,51 @@ fun TiledGrid(
             else -> spanWidth
         }
         var maxHeight = 0
-        val positions = hashMapOf<String, Pair<Int, Int>>()
-        val placeables = hashMapOf<String, Placeable>()
+        val tileRectangles = hashMapOf<String, Rectangle>()
+        val tilePlaceables = hashMapOf<String, Placeable>()
+        val badgePlaceables = hashMapOf<String, Placeable>()
         measurables.forEach { measurable ->
-            val id = measurable.layoutId as String
-            val tile = tilesMap.getValue(id)
-            val x = getTilePosition(tile.column, resolvedSpanWidth, spanInterval).roundToPx()
-            val y = getTilePosition(tile.row, spanHeight, spanInterval).roundToPx()
-            val width = getTileSize(tile.width, resolvedSpanWidth, spanInterval).roundToPx()
-            val height = getTileSize(tile.height, spanHeight, spanInterval).roundToPx()
-            maxHeight = max(maxHeight, y + height)
-            positions[id] = Pair(x, y)
-            placeables[id] = measurable.measure(
-                constraints.copy(
-                    minWidth = width,
-                    maxWidth = width,
-                    minHeight = height,
-                    maxHeight = height,
-                )
-            )
+            when (val elementId = measurable.layoutId) {
+                is TileId -> {
+                    val tile = tilesMap.getValue(elementId.id)
+                    val x = getTilePosition(tile.column, resolvedSpanWidth, spanInterval).roundToPx()
+                    val y = getTilePosition(tile.row, spanHeight, spanInterval).roundToPx()
+                    val width = getTileSize(tile.width, resolvedSpanWidth, spanInterval).roundToPx()
+                    val height = getTileSize(tile.height, spanHeight, spanInterval).roundToPx()
+                    maxHeight = max(maxHeight, y + height)
+                    tileRectangles[elementId.id] = Rectangle(x, y, width, height)
+                    tilePlaceables[elementId.id] = measurable.measure(
+                        constraints.copy(
+                            minWidth = width,
+                            maxWidth = width,
+                            minHeight = height,
+                            maxHeight = height,
+                        )
+                    )
+                }
+                is BadgeId -> {
+                    badgePlaceables[elementId.id] = measurable.measure(
+                        constraints.copy(
+                            minWidth = 0,
+                            minHeight = 0
+                        )
+                    )
+                }
+            }
         }
         layout(constraints.maxWidth, maxHeight) {
-            placeables.forEach { (id, placeable) ->
-                val position = positions.getValue(id)
+            tilePlaceables.forEach { (id, placeable) ->
+                val rect = tileRectangles.getValue(id)
                 placeable.placeRelative(
-                    x = position.first,
-                    y = position.second
+                    x = rect.x,
+                    y = rect.y
+                )
+            }
+            badgePlaceables.forEach { (id, placeable) ->
+                val rect = tileRectangles.getValue(id)
+                placeable.placeRelative(
+                    x = rect.x + rect.w + badgeProtrusion.roundToPx() - placeable.width,
+                    y = rect.y - badgeProtrusion.roundToPx()
                 )
             }
         }
@@ -81,7 +116,7 @@ private fun getTileSize(spans: Int, spanSize: Dp, interval: Dp): Dp =
 private fun Tile(tile: Tile) {
     Surface(
         modifier = Modifier
-            .layoutId(tile.id)
+            .layoutId(TileId(tile.id))
             .clip(MaterialTheme.shapes.medium)
             .clickable {},
         color = tile.bgColor,
@@ -89,18 +124,57 @@ private fun Tile(tile: Tile) {
     )
 }
 
+
+@Composable
+private fun Badge(id: String) {
+    Surface(
+        modifier = Modifier
+            .layoutId(BadgeId(id))
+            .width(40.dp)
+            .height(20.dp),
+        shape = RoundedCornerShape(100.dp),
+        color = CinnabarToxic,
+        elevation = 8.dp
+    ) {
+        Text(
+            text = "New",
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+private sealed class ElementId(val id: String)
+private class TileId(id: String) : ElementId(id)
+private class BadgeId(id: String) : ElementId(id)
+
+private class Rectangle(val x: Int, val y: Int, val w: Int, val h: Int)
+
+@Preview
+@Composable
+fun BadgePreview() {
+    TiledGridTheme {
+        Badge("1")
+    }
+}
+
 @Preview(widthDp = 100, heightDp = 100)
 @Composable
 fun TilePreview() {
     TiledGridTheme {
-        Tile(Tile(
-            id = "1",
-            row = 0,
-            column = 0,
-            width = 2,
-            height = 2,
-            bgColor = Indigo400
-        ))
+        Tile(
+            Tile(
+                id = "1",
+                row = 0,
+                column = 0,
+                width = 2,
+                height = 2,
+                bgColor = Indigo100,
+                badge = true
+            )
+        )
     }
 }
 

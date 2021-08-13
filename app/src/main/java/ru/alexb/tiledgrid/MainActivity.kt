@@ -29,7 +29,7 @@ fun MainScreen() {
                 tiles = tilesSample,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(4.dp),
                 columns = 6
             )
         }
