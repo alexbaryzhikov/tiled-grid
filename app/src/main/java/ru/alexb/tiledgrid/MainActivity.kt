@@ -10,7 +10,6 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.flowOf
 import ru.alexb.tiledgrid.data.tilesSample
 import ru.alexb.tiledgrid.ui.grid.TiledGrid
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
@@ -27,11 +26,11 @@ fun MainScreen() {
     TiledGridTheme {
         Surface(color = MaterialTheme.colors.background) {
             TiledGrid(
+                tiles = tilesSample,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp),
-                horizontalSpans = 6,
-                tiles = flowOf(tilesSample)
+                horizontalSpans = 6
             )
         }
     }

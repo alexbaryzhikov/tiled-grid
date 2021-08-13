@@ -2,13 +2,10 @@ package ru.alexb.tiledgrid.ui.grid
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -18,28 +15,23 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flowOf
 import ru.alexb.tiledgrid.data.tilesSample
-import ru.alexb.tiledgrid.ui.theme.Purple200
+import ru.alexb.tiledgrid.ui.theme.Indigo400
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 import kotlin.math.max
 
 @Composable
 fun TiledGrid(
+    tiles: List<Tile>,
     modifier: Modifier = Modifier,
     horizontalSpans: Int = 6,
     interval: Dp = 8.dp,
-    tiles: Flow<List<Tile>> = emptyFlow(),
 ) {
-    require(horizontalSpans > 0) { "Horizontal spans must be greater than 0" }
-    val tilesState by tiles.collectAsState(initial = emptyList())
     Layout(
-        content = { tilesState.forEach { Tile(it) } },
+        content = { tiles.forEach { Tile(it) } },
         modifier = modifier
     ) { measurables, constraints ->
-        val tilesMap = tilesState.associateBy { it.id }
+        val tilesMap = tiles.associateBy { it.id }
         val dpu = (constraints.maxWidth.toDp() - interval * (horizontalSpans - 1)) / horizontalSpans
         var maxHeight = 0
         val positions = hashMapOf<String, Pair<Int, Int>>()
@@ -90,47 +82,23 @@ private fun Tile(tile: Tile) {
     )
 }
 
-@Composable
-fun MyList(
-    modifier: Modifier = Modifier
-) {
-    val spans by remember { mutableStateOf(3) }
-    Layout(
-        modifier = modifier,
-        content = {
-            repeat(spans) {
-                Surface(color = Purple200) { }
-            }
-        }
-    ) { measurables, constraints ->
-        var height = 0
-        val placeables = measurables.map {
-            it.measure(constraints.copy(minHeight = 10.dp.roundToPx()))
-        }
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            placeables.forEach {
-                it.placeRelative(
-                    x = 0,
-                    y = height
-                )
-                height += it.height + 8.dp.roundToPx()
-            }
-        }
-    }
-}
-
-@Preview()
-@Composable
-fun MyListPreview() {
-    MyList(modifier = Modifier.size(100.dp))
-}
-
 @Preview
 @Composable
 fun TilePreview() {
     TiledGridTheme {
-        Tile(Tile(id = "1", row = 0, column = 0, width = 2, height = 2, bgColor = Purple200) {
-            Surface(modifier = Modifier.size(80.dp), color = Color(0x00000000)) {}
+        Tile(Tile(
+            id = "1",
+            row = 0,
+            column = 0,
+            width = 2,
+            height = 2,
+            bgColor = Indigo400
+        ) {
+            Surface(
+                modifier = Modifier.size(100.dp),
+                color = Color(0x00000000),
+                content = {}
+            )
         })
     }
 }
@@ -141,9 +109,9 @@ fun TiledGridPreview() {
     TiledGridTheme {
         Surface(color = MaterialTheme.colors.background) {
             TiledGrid(
-                modifier = Modifier.size(300.dp),
-                horizontalSpans = 6,
-                tiles = flowOf(tilesSample)
+                tiles = tilesSample,
+                modifier = Modifier.width(300.dp),
+                horizontalSpans = 6
             )
         }
     }
