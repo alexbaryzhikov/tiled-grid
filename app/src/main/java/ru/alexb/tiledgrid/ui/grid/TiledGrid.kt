@@ -3,7 +3,6 @@ package ru.alexb.tiledgrid.ui.grid
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -124,19 +123,18 @@ private fun Tile(tile: Tile) {
     )
 }
 
-
 @Composable
 private fun Badge(id: String) {
     Surface(
-        modifier = Modifier
-            .layoutId(BadgeId(id))
-            .width(40.dp)
-            .height(20.dp),
+        modifier = Modifier.layoutId(BadgeId(id)),
         shape = RoundedCornerShape(100.dp),
         color = CinnabarToxic,
         elevation = 8.dp
     ) {
         Text(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .height(18.dp),
             text = "New",
             fontSize = 12.sp,
             fontWeight = FontWeight.Medium,
@@ -145,12 +143,6 @@ private fun Badge(id: String) {
         )
     }
 }
-
-private sealed class ElementId(val id: String)
-private class TileId(id: String) : ElementId(id)
-private class BadgeId(id: String) : ElementId(id)
-
-private class Rectangle(val x: Int, val y: Int, val w: Int, val h: Int)
 
 @Preview
 @Composable
