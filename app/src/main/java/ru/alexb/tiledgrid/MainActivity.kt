@@ -22,8 +22,8 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.alexb.tiledgrid.data.tilesSample
-import ru.alexb.tiledgrid.ui.grid.CardWithGradient
 import ru.alexb.tiledgrid.ui.grid.TiledGrid
+import ru.alexb.tiledgrid.ui.surface.GradientSurface
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 
 class MainActivity : ComponentActivity() {
@@ -37,13 +37,13 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     TiledGridTheme {
         Surface(color = MaterialTheme.colors.background) {
-            CardWithGradientTest()
+            GradientSurfaceDemo()
         }
     }
 }
 
 @Composable
-fun TiledGridTest() {
+fun TiledGridDemo() {
     TiledGrid(
         tiles = tilesSample,
         modifier = Modifier
@@ -54,7 +54,7 @@ fun TiledGridTest() {
 }
 
 @Composable
-fun CardWithGradientTest() {
+fun GradientSurfaceDemo() {
     var angle by remember { mutableStateOf(0.0) }
     LaunchedEffect(Unit) {
         launch {
@@ -66,7 +66,7 @@ fun CardWithGradientTest() {
     }
     Column {
         Text(angle.toString())
-        CardWithGradient(
+        GradientSurface(
             modifier = Modifier
                 .width(200.dp)
                 .height(160.dp),

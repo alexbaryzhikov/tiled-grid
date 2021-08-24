@@ -1,4 +1,4 @@
-package ru.alexb.tiledgrid.ui.grid
+package ru.alexb.tiledgrid.ui.surface
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.alexb.tiledgrid.ui.theme.Indigo400
 import ru.alexb.tiledgrid.ui.theme.Purple500
 import ru.alexb.tiledgrid.ui.theme.Teal200
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
@@ -24,10 +25,11 @@ import kotlin.math.sin
 import kotlin.math.sqrt
 
 @Composable
-fun CardWithGradient(
+fun GradientSurface(
     modifier: Modifier = Modifier,
-    colors: List<Color> = listOf(Purple500, Teal200),
-    gradientAngleRadians: Double = PI
+    colors: List<Color> = listOf(Teal200, Indigo400, Purple500),
+    gradientAngleRadians: Double = PI,
+    content: @Composable () -> Unit = {}
 ) {
     BoxWithConstraints(modifier = modifier) {
         val (startOffset, endOffset) = getGradientVector(gradientAngleRadians)
@@ -40,9 +42,10 @@ fun CardWithGradient(
                         start = startOffset,
                         end = endOffset
                     )
-                ),
-            content = {}
-        )
+                )
+        ) {
+            content()
+        }
     }
 }
 
@@ -106,8 +109,8 @@ private fun Double.round4(): Double = round(this * 1E+4) / 1E+4
 
 @Preview(widthDp = 200, heightDp = 200)
 @Composable
-fun CardWithGradientPreview() {
+private fun GradientSurfacePreview() {
     TiledGridTheme {
-        CardWithGradient(gradientAngleRadians = -2.0)
+        GradientSurface(gradientAngleRadians = -2.0)
     }
 }
