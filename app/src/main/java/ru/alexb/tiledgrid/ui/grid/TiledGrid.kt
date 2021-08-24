@@ -21,8 +21,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.alexb.tiledgrid.data.tilesSample
+import ru.alexb.tiledgrid.ui.surface.ColoredSurface
+import ru.alexb.tiledgrid.ui.surface.GradientSurface
 import ru.alexb.tiledgrid.ui.theme.CinnabarToxic
-import ru.alexb.tiledgrid.ui.theme.Indigo100
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 import kotlin.math.max
 
@@ -113,14 +114,23 @@ private fun getTileSize(spans: Int, spanSize: Dp, interval: Dp): Dp =
 
 @Composable
 private fun Tile(tile: Tile) {
-    Surface(
-        modifier = Modifier
-            .layoutId(TileId(tile.id))
-            .clip(MaterialTheme.shapes.medium)
-            .clickable {},
-        color = tile.bgColor,
-        content = tile.content
-    )
+    val modifier = Modifier
+        .layoutId(TileId(tile.id))
+        .clip(MaterialTheme.shapes.medium)
+        .clickable {}
+    when (tile.background) {
+        is TileBackground.Colored -> ColoredSurface(
+            modifier = modifier,
+            color = tile.background.color,
+            content = tile.content
+        )
+        is TileBackground.Gradient -> GradientSurface(
+            modifier = modifier,
+            colors = tile.background.colors,
+            angleRadians = tile.background.angleRadians,
+            content = tile.content
+        )
+    }
 }
 
 @Composable
@@ -140,32 +150,6 @@ private fun Badge(id: String) {
             fontWeight = FontWeight.Medium,
             color = Color.White,
             textAlign = TextAlign.Center,
-        )
-    }
-}
-
-@Preview
-@Composable
-fun BadgePreview() {
-    TiledGridTheme {
-        Badge("1")
-    }
-}
-
-@Preview(widthDp = 100, heightDp = 100)
-@Composable
-fun TilePreview() {
-    TiledGridTheme {
-        Tile(
-            Tile(
-                id = "1",
-                row = 0,
-                column = 0,
-                width = 2,
-                height = 2,
-                bgColor = Indigo100,
-                badge = true
-            )
         )
     }
 }

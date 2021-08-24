@@ -9,10 +9,15 @@ class Tile(
     val column: Int,
     val width: Int,
     val height: Int,
-    val bgColor: Color,
+    val background: TileBackground = TileBackground.Colored(Color.White),
     val badge: Boolean = false,
     val content: @Composable () -> Unit = {}
 )
+
+sealed class TileBackground {
+    class Colored(val color: Color) : TileBackground()
+    class Gradient(val colors: List<Color>, val angleRadians: Double) : TileBackground()
+}
 
 sealed class ElementId(val id: String)
 

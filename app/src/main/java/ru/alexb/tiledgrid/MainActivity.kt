@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
 fun MainScreen() {
     TiledGridTheme {
         Surface(color = MaterialTheme.colors.background) {
-            GradientSurfaceDemo()
+            TiledGridDemo()
         }
     }
 }
@@ -70,7 +70,7 @@ fun GradientSurfaceDemo() {
             modifier = Modifier
                 .width(200.dp)
                 .height(160.dp),
-            gradientAngleRadians = angle
+            angleRadians = angle
         )
     }
 }

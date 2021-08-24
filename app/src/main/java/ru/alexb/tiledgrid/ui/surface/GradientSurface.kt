@@ -13,9 +13,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import ru.alexb.tiledgrid.ui.theme.Green100
 import ru.alexb.tiledgrid.ui.theme.Indigo400
 import ru.alexb.tiledgrid.ui.theme.Purple500
-import ru.alexb.tiledgrid.ui.theme.Teal200
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 import kotlin.math.PI
 import kotlin.math.atan2
@@ -27,12 +27,12 @@ import kotlin.math.sqrt
 @Composable
 fun GradientSurface(
     modifier: Modifier = Modifier,
-    colors: List<Color> = listOf(Teal200, Indigo400, Purple500),
-    gradientAngleRadians: Double = PI,
+    colors: List<Color> = listOf(Green100, Indigo400, Purple500),
+    angleRadians: Double = PI,
     content: @Composable () -> Unit = {}
 ) {
     BoxWithConstraints(modifier = modifier) {
-        val (startOffset, endOffset) = getGradientVector(gradientAngleRadians)
+        val (startOffset, endOffset) = getGradientVector(angleRadians)
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -50,16 +50,16 @@ fun GradientSurface(
 }
 
 @Composable
-private fun BoxWithConstraintsScope.getGradientVector(gradientAngleRadians: Double): Pair<Offset, Offset> {
+private fun BoxWithConstraintsScope.getGradientVector(angleRadians: Double): Pair<Offset, Offset> {
     val w = maxWidth.value.toDouble()
     val h = maxHeight.value.toDouble()
-    val alpha = gradientAngleRadians.toLowerRightQuarter()
+    val alpha = angleRadians.toLowerRightQuarter()
     val beta = atan2(h, w)
     val gamma = 2 * alpha - beta
     val r = sqrt(w * w + h * h) / 4.0
     val xNorm = (r * (3.0 * cos(beta) + cos(gamma))).round4().dp
     val yNorm = (r * (3.0 * sin(beta) + sin(gamma))).round4().dp
-    val (x, y) = when (Quarter.forAngle(gradientAngleRadians)) {
+    val (x, y) = when (Quarter.forAngle(angleRadians)) {
         Quarter.LOWER_RIGHT -> xNorm to yNorm
         Quarter.UPPER_RIGHT -> xNorm to (maxHeight - yNorm)
         Quarter.LOWER_LEFT -> (maxWidth - xNorm) to yNorm
@@ -111,6 +111,6 @@ private fun Double.round4(): Double = round(this * 1E+4) / 1E+4
 @Composable
 private fun GradientSurfacePreview() {
     TiledGridTheme {
-        GradientSurface(gradientAngleRadians = -2.0)
+        GradientSurface(angleRadians = -2.0)
     }
 }
