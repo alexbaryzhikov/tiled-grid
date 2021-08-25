@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import ru.alexb.tiledgrid.ui.grid.TiledGrid
 import ru.alexb.tiledgrid.ui.grid.tilesSample
 import ru.alexb.tiledgrid.ui.surface.GradientSurface
+import ru.alexb.tiledgrid.ui.surface.ImageSurface
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 
 class MainActivity : ComponentActivity() {
@@ -73,4 +74,27 @@ fun GradientSurfaceDemo() {
             angleRadians = angle
         )
     }
+}
+
+@Composable
+fun ImageSurfaceDemo() {
+    var offsetY by remember { mutableStateOf(200.dp) }
+    LaunchedEffect(Unit) {
+        launch {
+            while (true) {
+                delay(10)
+                offsetY -= 0.1.dp
+            }
+        }
+    }
+    ImageSurface(
+        imageId = R.drawable.lenna,
+        modifier = Modifier
+            .width(200.dp)
+            .height(160.dp),
+        scale = 5f,
+        alpha = 1f,
+        offsetX = 10.dp,
+        offsetY = offsetY
+    )
 }
