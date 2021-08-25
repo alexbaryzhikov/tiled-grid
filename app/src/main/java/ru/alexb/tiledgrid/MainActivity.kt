@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.alexb.tiledgrid.data.tilesSample
 import ru.alexb.tiledgrid.ui.grid.TiledGrid
+import ru.alexb.tiledgrid.ui.grid.tilesSample
 import ru.alexb.tiledgrid.ui.surface.GradientSurface
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 

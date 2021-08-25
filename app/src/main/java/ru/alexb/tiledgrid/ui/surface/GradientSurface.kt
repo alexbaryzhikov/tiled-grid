@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import ru.alexb.tiledgrid.ui.theme.Green100
 import ru.alexb.tiledgrid.ui.theme.Indigo400
+import ru.alexb.tiledgrid.ui.theme.LightBlue200
 import ru.alexb.tiledgrid.ui.theme.Purple500
 import ru.alexb.tiledgrid.ui.theme.TiledGridTheme
 import kotlin.math.PI
@@ -27,7 +27,7 @@ import kotlin.math.sqrt
 @Composable
 fun GradientSurface(
     modifier: Modifier = Modifier,
-    colors: List<Color> = listOf(Green100, Indigo400, Purple500),
+    colors: List<Color> = listOf(LightBlue200, Indigo400, Purple500),
     angleRadians: Double = PI,
     content: @Composable () -> Unit = {}
 ) {
